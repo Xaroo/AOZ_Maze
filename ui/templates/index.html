@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maze Solver</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="header">
+        Maze Solver
+    </div>
+    <div class="content">
+        <div class="upload">
+            <form action="{{ url_for('home') }}" method="post" enctype="multipart/form-data">
+                <div class="control-buttons">
+                    <input type="file" name="file" id="file" required>
+                    <input type="submit" value="Upload Maze">
+                </div>
+            </form>
+        </div>
+
+        {% if uploaded_file_url %}
+        <div class="uploaded-image">
+            <h3>Uploaded Maze Image:</h3>
+            <img src="{{ uploaded_file_url }}" alt="Uploaded Maze" style="width: 800px;">
+        </div>
+        {% endif %}
+
+        {% if uploaded_file_url %}
+        <div class="control-buttons">
+            <button onclick="solveMaze()">Solve Maze</button>
+        </div>
+        {% endif %}
+
+        <div id="solution-output"></div>
+
+    </div>
+
+    <script>
+        function solveMaze() {
+            const uploadedFileUrl = '{{ uploaded_file_url }}';
+            const formData = new FormData();
+            formData.append('file_url', uploadedFileUrl);
+            fetch("/solve_maze", {
+                method: "POST",
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(result => {
+                const output = document.getElementById("solution-output");
+                if (result.success) {
+                    output.innerHTML = `<h3>Maze Solution:</h3><img src="${result.solved_file_url}" alt="Solved Maze" style="width: 800px;">`;
+                } else {
+                    output.innerHTML = `<h3>Error:</h3><p>${result.error}</p>`;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</body>
+</html>
