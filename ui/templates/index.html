@@ -45,9 +45,9 @@
             const uploadedFileUrl = '{{ uploaded_file_url }}';
             const formData = new FormData();
             formData.append('file_url', uploadedFileUrl);
-
-            document.getElementById('delete-button-container').style.display = 'block';
-
+    
+            document.getElementById('delete-button-container').style.display = 'none';
+    
             fetch("/solve_maze", {
                 method: "POST",
                 body: formData,
@@ -57,6 +57,8 @@
                 const output = document.getElementById("solution-output");
                 if (result.success) {
                     output.innerHTML = `<h3>Maze Solution:</h3><img src="${result.solved_file_url}" alt="Solved Maze" style="width: 800px;">`;
+    
+                    document.getElementById('delete-button-container').style.display = 'block';
                 } else {
                     output.innerHTML = `<h3>Error:</h3><p>${result.error}</p>`;
                 }
@@ -65,7 +67,7 @@
                 console.error('Error:', error);
             });
         }
-
+    
         function deleteMaze() {
             fetch("/delete_maze", {
                 method: "POST",
@@ -86,5 +88,6 @@
             });
         }
     </script>
+    
 </body>
 </html>
