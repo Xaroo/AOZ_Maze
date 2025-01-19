@@ -28,13 +28,16 @@
         {% endif %}
 
         {% if uploaded_file_url %}
-        <div class="control-buttons">
+        <div class="control-buttons" id="solve-button-container">
             <button onclick="solveMaze()">Solve Maze</button>
         </div>
         {% endif %}
 
         <div id="solution-output"></div>
 
+        <div class="control-buttons" id="delete-button-container" style="display: none;">
+            <button onclick="deleteMaze()">Delete Maze</button>
+        </div>
     </div>
 
     <script>
@@ -42,6 +45,9 @@
             const uploadedFileUrl = '{{ uploaded_file_url }}';
             const formData = new FormData();
             formData.append('file_url', uploadedFileUrl);
+
+            document.getElementById('delete-button-container').style.display = 'block';
+
             fetch("/solve_maze", {
                 method: "POST",
                 body: formData,
@@ -53,6 +59,26 @@
                     output.innerHTML = `<h3>Maze Solution:</h3><img src="${result.solved_file_url}" alt="Solved Maze" style="width: 800px;">`;
                 } else {
                     output.innerHTML = `<h3>Error:</h3><p>${result.error}</p>`;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        function deleteMaze() {
+            fetch("/delete_maze", {
+                method: "POST",
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    document.getElementById("solution-output").innerHTML = `<p>The maze and its solution have been deleted.</p>`;
+                    document.querySelector('.uploaded-image').style.display = 'none';
+                    document.querySelector('#delete-button-container').style.display = 'none';
+                    document.getElementById('solve-button-container').style.display = 'none';
+                } else {
+                    alert("Error deleting the maze.");
                 }
             })
             .catch(error => {

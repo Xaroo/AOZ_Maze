@@ -1,5 +1,5 @@
-from flask import Flask, render_template, request, url_for
 import os
+from flask import Flask, render_template, request, url_for, jsonify
 import sys
 
 sys.path.append(os.path.abspath('../'))
@@ -54,6 +54,21 @@ def solve_maze():
             return {'success': False, 'error': 'Solved maze not found'}, 500
     except Exception as e:
         return {'success': False, 'error': str(e)}, 500
+
+@app.route('/delete_maze', methods=['POST'])
+def delete_maze():
+    try:
+        uploaded_file_path = os.path.join(app.config['UPLOAD_FOLDER'], "maze.jpg")
+        solved_image_path = os.path.join(app.config['SOLVED_FOLDER'], "solved_maze.jpg")
+
+        if os.path.exists(uploaded_file_path):
+            os.remove(uploaded_file_path)
+        if os.path.exists(solved_image_path):
+            os.remove(solved_image_path)
+
+        return jsonify({'success': True})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
