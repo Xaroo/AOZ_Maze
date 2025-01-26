@@ -56,7 +56,7 @@
             .then(result => {
                 const output = document.getElementById("solution-output");
                 if (result.success) {
-                    output.innerHTML = `<h3>Maze Solution:</h3><img src="${result.solved_file_url}" alt="Solved Maze" style="width: 800px;">`;
+                    output.innerHTML = ` <div class="uploaded-image"><h3>Maze Solution:</h3><img src="${result.solved_file_url}" alt="Solved Maze" style="width: 800px;"></div>`;
     
                     document.getElementById('delete-button-container').style.display = 'block';
                 } else {
